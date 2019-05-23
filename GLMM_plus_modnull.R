@@ -15,6 +15,47 @@ library(MASS)
 library(doSNOW)
 library(Rmisc)
 
+#############################################################################
+################################################################################
+# Funtions
+#####
+
+# extracting coefficients for the final figure 
+# function recomputing the coefficients of the specialization relatively to zero instead of the first year of the study
+
+marginal.inter.pql <- function(mod, var)
+{
+  require(car)
+  coef.sar <- mod$coefficients$fixed
+  cnames <- names(coef.sar)
+  
+  names(coef.sar) <- paste("b", c(0:(length(coef.sar)-1)), sep="")
+  
+  #Extract the specific parameters of interest
+  vars <- grep(var,cnames,value=T)
+  
+  names(coef.sar) <- paste("b", c(0:(length(coef.sar)-1)), sep="")
+  
+  #--Create Data Frame to store Main Effect
+  var1 <- names(coef.sar)[which(cnames==vars[1])]
+  
+  interac <- deltaMethod(coef.sar,g=var1,vcov=vcov(mod)[cnames, cnames])
+  
+  for (i in c(2:length(vars)))
+  {
+    interac <- rbind(interac, 
+                     deltaMethod(coef.sar,g=paste(var1, 
+                                                  names(coef.sar)[which(cnames==vars[i])], sep="+"),vcov=vcov(mod)[cnames, cnames]))
+  }
+  
+  rownames(interac) <- vars
+  interac$tval <- interac$Estimate/interac$SE
+  
+  interac$pval <- 2*pnorm(abs(interac$tval), lower.tail=F)
+  return(interac)
+}
+
+
 ##########################################################
 #########################################################
 # GLMM with glmmPQL on the richness and specialization data
@@ -78,42 +119,6 @@ results<-sum_glmm$tTable
 
 coef_temp<-as.data.frame(RS_mod$coefficients$fixed[52:100])
 coef_temp$year<-c(1967:2015)
-
-#####
-# extracting coefficients for the final figure 
-# function recomputing the coefficients of the specialization relatively to zero instead of the first year of the study
-
-marginal.inter.pql <- function(mod, var)
-{
-  require(car)
-  coef.sar <- mod$coefficients$fixed
-  cnames <- names(coef.sar)
-  
-  names(coef.sar) <- paste("b", c(0:(length(coef.sar)-1)), sep="")
-  
-  #Extract the specific parameters of interest
-  vars <- grep(var,cnames,value=T)
-  
-  names(coef.sar) <- paste("b", c(0:(length(coef.sar)-1)), sep="")
-  
-  #--Create Data Frame to store Main Effect
-  var1 <- names(coef.sar)[which(cnames==vars[1])]
-  
-  interac <- deltaMethod(coef.sar,g=var1,vcov=vcov(mod)[cnames, cnames])
-  
-  for (i in c(2:length(vars)))
-  {
-    interac <- rbind(interac, 
-                     deltaMethod(coef.sar,g=paste(var1, 
-                    names(coef.sar)[which(cnames==vars[i])], sep="+"),vcov=vcov(mod)[cnames, cnames]))
-  }
-  
-  rownames(interac) <- vars
-  interac$tval <- interac$Estimate/interac$SE
-  
-  interac$pval <- 2*pnorm(abs(interac$tval), lower.tail=F)
-  return(interac)
-}
 
 # computing the coeficients with reference to 0 for RS_mod
 mod <- RS_mod
@@ -241,4 +246,4 @@ p <- p + geom_ribbon(aes(ymin=nulm$lower, ymax=nulm$upper), alpha=0.15)
 
 print(p)  
 
-ggsave("final_glmm_figure.png", width= 12, height= 12,unit="cm",dpi=600)
+#ggsave("file", width= 12, height= 12,unit="cm",dpi=600)
