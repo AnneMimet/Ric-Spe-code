@@ -53,7 +53,7 @@ table(tab$loc)
 # 138 273 425 133 170 404  68
 
 
-########################
+####
 # simplification koppen climate classification
 
 table(tab$world_kopp)
@@ -74,7 +74,7 @@ tab <- subset(tab, !tab$world_kopp==19)
 # 17  35  17 216  24  67 275  58 153 530 138
 
 
-############
+####
 # dividing the data in 2 parts: one for fitting the multivariate regression tree (and define the habitat classes), 
 # the second one to compute the species specialization
 
@@ -112,7 +112,7 @@ sp_selec <- subset(sp2, select= names(s2))
 
 tab <- cbind(sp_selec, tree[,1:9], tree[,216:220])
 
-##############
+####
 # scaling the data
 
 colMu <- colMeans(tab[,1:153]) 
@@ -120,7 +120,7 @@ spp2 <- sweep(tab[,1:153], 2, colMu, "-")
 rowMu <- rowMeans(spp2) 
 spp2 <- sweep(spp2, 1, rowMu, "-") 
 
-###############################
+####
 # run the mrt using presence/ absence
 
 spp_pa <- tab[,1:153]
@@ -129,7 +129,7 @@ spp_pa[spp_pa>0] <- 1
 esb2 <- mvpart(data.matrix(spp_pa)~ as.factor(tab$world_kopp) +as.factor(tab$loc), data=tab,xval=5, 
              xvmul=500, xv="pick",cp= 0.002, minbucket=30, method="mrt", rsq=T)  # 13 classes, good
 
-###############################
+#####
 ## extracting the classes and the correspondance between class id and the Koppen and land cover classes
 
 tab$cl <- esb2$where
@@ -163,13 +163,16 @@ sp_selec <- subset(sp2, select= names(s2))
 
 tab <- cbind(sp_selec, tab[,1:9], tab[,216:221])
 
-##################################
+####
+# prepare table
 tab <- merge(tab, corresp, by="comb")
 species <- tab[,c(2:163,180)]
 comm <- species[,1:163]
 class <- levels(as.factor(tab$cl))
 sp <- colnames(species[,1:163])
 
+####
+# compute species specialization
 indval <- multipatt(comm, species$cl, duleg=T)
 summary(indval, indvalcomp=TRUE)
 
@@ -226,7 +229,7 @@ tab_csi$statenum <- temp[,1]
 tab_csi$rte_id <- str_sub(as.character(routes$Group.1), 1, nchar(as.character(routes$Group.1))-5)
 
 ####
-# export database: communitiy and specialzation at the route scale 
+# export database: community and specialzation at the route scale 
 colnames(tab_csi) <- c("csi", "ric", "id_rte_year","year","route", "statenum", "rte_id")
 write.table(tab_csi, "Community_data.txt")
 
