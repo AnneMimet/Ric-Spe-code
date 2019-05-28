@@ -14,7 +14,7 @@ Anne Mimet 1,2,3*, Robert Buitenwerf 1,4, Brody Sandel 1,5, Jens-Christian Svenn
 # Available code files
 We provide 5 different code files corresponding to the different steps and analyses presented in the paper. These code files can be run using the data made freely available with the paper (link to be updated).
 
-File 1 - computing_ssi.R: Code for defining the habitats (multivariate regression tree approach), computing the species specialization and the specialization of the communities (Steps 1, 2 and 3 in the paper). This code also create the data base with community richness and specialization used for the analyses (Community_data.txt)
+File 1 - computing_mrt_ssi_csi_richness.R: Code for defining the habitats (multivariate regression tree approach), computing the species specialization and the specialization of the communities (Steps 1, 2 and 3 in the paper). This code also create the data base with community richness and specialization used for the analyses (Community_data.txt)
 
 File 2 - GLMM_plus_modnull.R - Code for analysis (1): Temporal change in the richness-specialization relationship. Include the code of the GLMM and of the null models + figures
 
