@@ -93,7 +93,12 @@ double.bk <- function(tab, breaks, year)
 d_comm <- read.table("S:/2bp/Community_data.txt", header=T)
 id <- unique(d_comm$year)
 
-####################################
+
+#############################################################################
+################################################################################
+# Run GAMs
+
+####
 # linear models
 
 res_linear <- as.data.frame(matrix(nrow=0, ncol=6))
@@ -464,8 +469,4 @@ p <- ggplot(data=pred, aes(x=csi_reg, y=ric_pred, ymin=35, ymax=60, fill = Year)
         legend.title=element_text(size=14),
         legend.text=element_text(size=14))
 p 
-
-
-
-ggsave("S:/relationship_1970_2014_ok.png")
-
+dev.off()
