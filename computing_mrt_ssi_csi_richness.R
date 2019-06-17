@@ -137,14 +137,14 @@ tab$cl <- esb2$where
 corresp <- unique(tab[,c(160:161,168)])
 
 #write.table(corresp,"correspondance.txt")
-#write.table(tab, "class_for_ssi.txt")
+
 
 
 #############################################################################
 ################################################################################
 # computing species specialization (ssi) using indicator A of Legendre and Legendre (1997), see methods - package indicspecies
 
-cl <- read.table("class_for_ssi.txt", header=T)
+cl <- tab
 tab <- read.table("data_for_ssi.txt", header=T)
 corresp <- read.table("correspondance.txt", header=T)
 corresp$comb <- paste(corresp$world_kopp, corresp$loc,sep="_")
